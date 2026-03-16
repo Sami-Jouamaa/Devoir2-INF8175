@@ -1,5 +1,5 @@
-% NOM_ETUDIANT_1 (MATRICULE_1)
-% NOM_ETUDIANT_2 (MATRICULE_2)
+% Sami Jouamaa Desautels (2247399)
+% Mikael Carrenard (2207902)
 
 include "globals.mzn";
 
@@ -24,12 +24,14 @@ array [1..n] of var 1..n: assignation_role;
 %-----------------------------------------------------------------------------%
 % Partie étudiant
 %-----------------------------------------------------------------------------%
-
-
-
+constraint all_different(assignation_role);
+constraint all_different([choix_costume[assignation_role[i], i] | i in 1..n]);
+constraint forall(i in 1..n-1)
+(
+  abs(assignation_role[i] - assignation_role[i + 1]) != 1
+);
 %-----------------------------------------------------------------------------%
-
-output	
+output
   ["L'acteur " ++ format(i) ++ 
    " prendra le rôle " ++ format(fix(assignation_role[i])) ++ 
    " (costume " ++ format(choix_costume[fix(assignation_role[i]), i]) ++ ")" ++"\n" 

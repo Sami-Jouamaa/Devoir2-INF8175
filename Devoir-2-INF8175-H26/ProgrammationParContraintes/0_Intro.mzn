@@ -1,5 +1,5 @@
-% NOM_ETUDIANT_1 (MATRICULE_1)
-% NOM_ETUDIANT_2 (MATRICULE_2)
+% Sami Jouamaa Desautels (2247399)
+% Mikael Carrenard (2207902)
 
 include "globals.mzn";
 
@@ -12,22 +12,26 @@ var 1000..9999: nombre;
 
 % Décomposition du nombre en un ensemble de chiffres
 array[1..4] of var 1..9: chiffres;
-
 %-----------------------------------------------------------------------------%
 % Objectif
 %-----------------------------------------------------------------------------%
 
 % Variable à minimiser
 var int: p;
-
+constraint p = chiffres[2] * chiffres[3] * chiffres[4];
 %-----------------------------------------------------------------------------%
 % Partie étudiant
 %-----------------------------------------------------------------------------%
-
-
+constraint nombre mod 2 == 0;
+constraint nombre == chiffres[1] * 1000 + chiffres[2] * 100 + chiffres[3] * 10 + chiffres[4];
+constraint all_different(chiffres);
+constraint chiffres[1] > chiffres[2];
+constraint chiffres[3] < chiffres[4];
+constraint chiffres[2] > chiffres[4];
+constraint chiffres[1] + chiffres[2] + chiffres[3] + chiffres[4] > 15;
 %-----------------------------------------------------------------------------%
-
+solve minimize p;
 output [
-  show(nombre)
+  "Nombre = ", show(nombre), "\n",
+  "Produit = ", show(p)
 ];
-

@@ -4,7 +4,7 @@ import time
 
 
 def solution_initial(schedule):
-#Gready approach
+#Greedy approach
     solution = {}
 
     for course in schedule.course_list:
