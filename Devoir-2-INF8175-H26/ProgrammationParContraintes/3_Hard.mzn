@@ -1,5 +1,5 @@
-% NOM_ETUDIANT_1 (MATRICULE_1)
-% NOM_ETUDIANT_2 (MATRICULE_2)
+% Sami Jouamaa Desautels (2247399)
+% Mikael Carrenard (2207902)
 
 include "globals.mzn"; 
 
@@ -44,14 +44,33 @@ var 0..max_trajet: total_temps_attentes = sum(temps_attente);
 
 % Temps de trajet à minimiser
 var int: temps_trajet;
-
 %-----------------------------------------------------------------------------%
 % Partie étudiant
 %-----------------------------------------------------------------------------%
-
-
+constraint cumul_temps[1] = 0;
+constraint circuit_tournee[chemin_tournee[n]] = chemin_tournee[1];
+constraint temps_trajet = cumul_temps[n] + temps_attente[n] + distance[chemin_tournee[n], chemin_tournee[1]];
+constraint forall(i in 1..n-1)(
+    circuit_tournee[chemin_tournee[i]] = chemin_tournee[i+1]
+);
+constraint forall(i in 1..n)
+(
+  temps_attente[i] >= 0 /\
+  cumul_temps[i] + temps_attente[i] >= fenetre_arrivee[chemin_tournee[i], 1] /\
+  cumul_temps[i] + temps_attente[i] <= fenetre_arrivee[chemin_tournee[i], 2]  
+);
+constraint all_different(chemin_tournee);
+constraint forall(i in 2..n)(
+    cumul_temps[i] == cumul_temps[i-1] + 
+                      distance[chemin_tournee[i-1], chemin_tournee[i]] + 
+                      temps_attente[i-1]
+);
+constraint chemin_tournee[1] = 1;
+constraint forall(i in 1..n-1)(
+    circuit_tournee[chemin_tournee[i]] = chemin_tournee[i+1]
+);
 %-----------------------------------------------------------------------------%
-
+solve minimize temps_trajet;
 output [
   "Chemin de la tournée                   : \(chemin_tournee)\n",
   "Circuit de la tournée                  : \(circuit_tournee)\n",
